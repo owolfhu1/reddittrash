@@ -1,0 +1,20 @@
+
+<div class="container">
+  <input class="form-control" type="text" #inputSetter>
+  <button class="btn btn-dark btn-block" (click)="view(inputSetter.value)">view</button>
+  <hr>
+  <ngb-alert type="success" [dismissible]="false">{{ post }}</ngb-alert>
+  <button class="btn btn-dark btn-block" (click)="reverse = !reverse">reverse</button>
+  <hr>
+  <span *ngFor="let comment of reversedComments; let i = index">
+    <app-comment *ngIf="i < limit" [comment]="comment" [url]="url"></app-comment>
+  </span>
+  <hr>
+  <button *ngIf="comments.length - limit > 0" class="btn btn-dark btn-block" (click)="limit = 5 + limit">
+    more ({{comments.length - limit}})
+  </button>
+  <button class="btn btn-dark btn-outline-danger btn-block" (click)="limit = 10">reset</button>
+<hr>
+<hr>
+</div>
+

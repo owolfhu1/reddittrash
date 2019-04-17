@@ -1,0 +1,36 @@
+<p>
+  <ngb-alert [dismissible]="false" [type]="type">
+    ({{comment.data.score}})<strong>{{comment.data.author}}</strong>: {{ comment.data.body }}
+    <br>
+
+    <button
+      *ngIf="replies.length > 0"
+      [ngClass]="['btn', show ? 'btn-danger' : 'btn-success', 'btn-block']"
+      (click)="show = !show">{{ show ? 'hide' : 'show'}} comments({{replies.length}})
+    </button>
+
+    <div *ngIf="show">
+      <hr>
+      <button *ngIf="replies.length > 1"
+              [ngClass]="['btn', 'btn-' + type, 'btn-block']"
+              (click)="reverse = !reverse">
+        reverse
+      </button>
+      <br>
+      <span *ngFor="let comment of repliesReverse; let i = index">
+        <app-comment *ngIf="i < limit" [url]="url" [comment]="comment" [level]="level + 1"></app-comment>
+      </span>
+      <button
+        [ngClass]="['btn', 'btn-' + type, 'btn-block']"
+        (click)="limit = limit + 2"
+        *ngIf="limit < replies.length">
+        more({{ replies.length - limit }})
+      </button>
+      <button *ngIf="replies.length > 1 && limit > 2"
+              [ngClass]="['btn', 'btn-' + type, 'btn-outline-danger', 'btn-block']"
+              (click)="limit = 2">
+        reset
+      </button>
+    </div>
+  </ngb-alert>
+</p>
