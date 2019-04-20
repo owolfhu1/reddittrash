@@ -27,7 +27,7 @@
         more({{ replies.length - limit }})
       </button>
       <button *ngIf="replies.length > 1 && limit > 2"
-              [ngClass]="['btn', 'btn-' + type, 'btn-outline-danger', 'btn-block']"
+              [ngClass]="['btn', 'btn-danger', 'btn-block']"
               (click)="limit = 2">
         reset
       </button>

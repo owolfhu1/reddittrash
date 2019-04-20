@@ -1,1 +1,19 @@
-<app-post></app-post>
+<input
+  class="form-control"
+  #input>
+<button
+  (click)="visitSub(input.value)"
+  class="btn btn-outline-info btn-warning btn-block">
+  Visit Sub
+</button>
+
+<app-sub
+  *ngIf="showSub"
+  [url]="url"
+  #subComponent
+  (viewPost)="viewPost($event)"></app-sub>
+
+<app-post
+  *ngIf="!showSub"
+  [url]="url"
+  #postComponent></app-post>

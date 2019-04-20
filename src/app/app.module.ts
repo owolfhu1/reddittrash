@@ -5,12 +5,14 @@ import { AppComponent } from './app.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { PostComponent } from './post/post.component';
 import { CommentComponent } from './comment/comment.component';
+import { SubComponent } from './sub/sub.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PostComponent,
-    CommentComponent
+    CommentComponent,
+    SubComponent
   ],
   imports: [
     BrowserModule,

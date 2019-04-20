@@ -26,6 +26,7 @@ export class PostComponent implements OnInit {
       if (comment.kind === 't1') {
         this.comments.push(comment);
       } else if (comment.kind === 'more') {
+        console.log(comment);
         comment.data.children.forEach(async id => {
           const fetchedComment = await this.getAComment(id);
           this.comments.push(fetchedComment);
@@ -39,7 +40,7 @@ export class PostComponent implements OnInit {
     let comment = {};
     let dataFound = false;
     while (!dataFound) {
-      await fetch(Strings.PRE + this.url + '/' + id + '.json', { mode: 'cors' }).then(x => x.json()).then(x => comment = x);
+      await fetch(Strings.PRE + this.url + '/' + id + '.json', { mode: 'cors' }).then(x => x.json()).then(B => comment = B);
       dataFound = !!comment[1].data.children[0];
     }
     return comment[1].data.children[0];

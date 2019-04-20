@@ -1,0 +1,42 @@
+<div class="container">
+<br>
+  <ngb-alert
+    type="danger"
+    [dismissible]="false"
+    *ngIf="error">
+    <h1>{{error}}</h1>
+  </ngb-alert>
+
+  <ngb-alert
+    type="success"
+    [dismissible]="false"
+    *ngIf="!error">
+    <h1 style="text-align: center">r/{{url}}</h1>
+  </ngb-alert>
+
+  <ngb-alert
+    type="primary"
+    [dismissible]="false"
+    *ngFor="let post of list">
+    {{post.data.score > 0 ? '+' : null}}{{post.data.score}} <b>r/{{ post.data.subreddit }}</b> posted by <b>{{ post.data.author }}</b> on {{ date(post.data.created) }}
+    <h2>{{ post.data.title }}</h2>
+
+    <img
+      *ngIf="post.data.post_hint === 'image'"
+      [src]="post.data.url"
+      width="100%"/>
+
+    <span
+      *ngIf="post.data.selftext" [innerHTML]="post.selftext_html">
+    </span>
+
+    <button
+      *ngIf="post.data.num_comments > 0"
+      class="btn btn-block btn-success btn-outline-primary"
+      (click)="viewPost.emit(getUrl(post.data.permalink))">
+      comments ({{ post.data.num_comments }})
+    </button>
+  </ngb-alert>
+
+
+</div>
