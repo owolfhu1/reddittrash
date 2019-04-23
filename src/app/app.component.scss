@@ -1,0 +1,21 @@
+ngb-alert {
+  position: fixed;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  overflow-y: scroll;
+  border: cadetblue solid 2px;
+  z-index: 101;
+}
+
+.input-group {
+  position: fixed;
+
+  margin: 1%;
+  width: 98%;
+}
+
+.top {
+  z-index: 100;
+}

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Strings} from '../strings';
 
 @Component({
@@ -6,26 +6,23 @@ import {Strings} from '../strings';
   templateUrl: './sub.component.html',
   styleUrls: ['./sub.component.scss']
 })
-export class SubComponent implements OnInit {
+export class SubComponent {
   @Input() url;
   @Output() viewPost: EventEmitter<string> = new EventEmitter<string>();
+  @Output() viewSub: EventEmitter<string> = new EventEmitter<string>();
 
   list: any[] = [];
   next;
   error;
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
   refresh() {
-    fetch(Strings.PRE + this.url + '.json', { mode: 'cors' }).then(r => r.json()).then(
+    this.list = [];
+    const url = Strings.PRE + this.url + '.json';
+    fetch(url, { mode: 'cors' }).then(r => r.json()).then(
       data => {
         this.error = '';
         this.list = data.data.children;
-        this.next = data.after;
-        console.log(this.list);
+        this.next = data.data.after;
       },
       error => this.error = error
     );
@@ -35,7 +32,7 @@ export class SubComponent implements OnInit {
     return permLink.substring(3, permLink.length - 1);
   }
 
-  date = created => {
+  date(created) {
     const data = new Date(created * 1000);
     const date = data.toLocaleDateString();
     const m = data.getHours() > 12 ? 'pm' : 'am';
@@ -44,4 +41,20 @@ export class SubComponent implements OnInit {
     return date + ' at ' + hours + ':' + mins + ' ' + m;
   }
 
+  getLinkImg(post) {
+    return !post.data.thumbnail || post.data.thumbnail === 'default' ?
+      'https://img.icons8.com/metro/104/000000/external-link.png' : post.data.thumbnail;
+  }
+
+  close(post) {
+    this.list.splice(this.list.indexOf(post), 1);
+  }
+
+  getMore() {
+    const url = Strings.PRE + this.url + '.json' + '?after=' + this.next;
+    fetch(url, { mode: 'cors' }).then(r => r.json()).then(data => {
+        data.data.children.forEach(item => this.list.push(item));
+        this.next = data.data.after;
+    });
+  }
 }

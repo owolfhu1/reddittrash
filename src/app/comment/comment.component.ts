@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Strings} from '../strings';
 
 @Component({
@@ -10,11 +10,17 @@ export class CommentComponent implements OnInit {
 
   @Input() comment: any;
   @Input() url;
+  @Input() op;
   show = false;
   replies: any[] = [];
   @Input() level = 1;
   limit = 2;
   reverse = false;
+  @Output() close: EventEmitter<void> = new EventEmitter();
+
+  closeComment(comment) {
+    this.replies.splice(this.replies.indexOf(comment), 1);
+  }
 
   get repliesReverse() {
     return this.reverse ? this.replies.reverse() : this.replies;
@@ -48,22 +54,21 @@ export class CommentComponent implements OnInit {
         comment.data.children.forEach(async id => {
           const fetchedComment = await this.getAComment(id);
           this.replies.push(fetchedComment);
-          this.replies.sort((a, b) => b.data.score - a.data.score);
         });
       }
     });
   }
+
   async getAComment(id) {
     let comment = {};
     let dataFound = false;
+    const url = Strings.PRE + this.url + '/' + id + '.json';
     while (!dataFound) {
-      await fetch(Strings.PRE + this.url + '/' + id + '.json', { mode: 'cors' }).then(x => x.json()).then(x => comment = x);
+      await fetch(url, { mode: 'cors' }).then(x => x.json()).then(x => comment = x);
       dataFound = !!comment[1].data.children[0];
     }
     return comment[1].data.children[0];
   }
-
-  constructor() { }
 
   ngOnInit() {
     if (this.comment.data.replies) {
@@ -71,4 +76,17 @@ export class CommentComponent implements OnInit {
     }
   }
 
+  date(created) {
+    const data = new Date(created * 1000);
+    const date = data.toLocaleDateString();
+    const m = data.getHours() > 12 ? 'pm' : 'am';
+    const hours = data.getHours() > 12 ? data.getHours() - 12 : data.getHours();
+    const mins = data.getMinutes();
+    return date + ' at ' + hours + ':' + mins + ' ' + m;
+  }
+
+  flip() {
+    this.replies.sort((a, b) => b.data.score - a.data.score);
+    this.reverse = !this.reverse;
+  }
 }

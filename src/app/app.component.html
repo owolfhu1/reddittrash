@@ -1,19 +1,47 @@
-<input
-  class="form-control"
-  #input>
-<button
-  (click)="visitSub(input.value)"
-  class="btn btn-outline-info btn-warning btn-block">
-  Visit Sub
-</button>
+
+<div [ngClass]="['input-group', 'mb-3', showInput ? 'top' : '']">
+
+  <div class="input-group-prepend">
+    <span class="input-group-text">r/</span>
+  </div>
+
+  <input
+    (keyup)="onKeyup($event)"
+    type="text"
+    class="form-control"
+    [placeholder]="url"
+    #input/>
+
+  <div class="input-group-append">
+    <button
+      *ngIf="input.value"
+      class="btn btn-success"
+      type="button"
+      (click)="onButtonPress(input)">
+      visit sub
+    </button>
+    <button
+      class="btn btn-warning"
+      type="button"
+      (click)="showInput = !showInput">
+      {{ showInput ? 'hide' : 'show'}}
+    </button>
+  </div>
+</div>
+
+<br/>
 
 <app-sub
-  *ngIf="showSub"
   [url]="url"
   #subComponent
-  (viewPost)="viewPost($event)"></app-sub>
+  (viewPost)="viewPost($event)"
+  (viewSub)="visitSub($event); input.value = ''"></app-sub>
 
-<app-post
-  *ngIf="!showSub"
-  [url]="url"
-  #postComponent></app-post>
+<ngb-alert
+  *ngIf="!!postUrl"
+  (close)="closePost()"
+  type="info">
+  <app-post
+    [url]="postUrl"
+    #postComponent></app-post>
+</ngb-alert>

@@ -1,20 +1,71 @@
 
 <div class="container">
-<!--  <input class="form-control" type="text" #inputSetter>-->
-<!--  <button class="btn btn-dark btn-block" (click)="view(inputSetter.value)">view</button>-->
-  <hr>
-  <ngb-alert type="success" [dismissible]="false">{{ post }}</ngb-alert>
-  <button class="btn btn-dark btn-block" (click)="reverse = !reverse">reverse</button>
-  <hr>
-  <span *ngFor="let comment of reversedComments; let i = index">
-    <app-comment *ngIf="i < limit" [comment]="comment" [url]="url"></app-comment>
+
+  <ngb-alert
+    *ngIf="post"
+    type="success"
+    [dismissible]="false">
+    {{ post.data.score > 0 ? '+' : null }}{{ post.data.score }} <b>
+    </b> posted by <b>{{ post.data.author }}</b> on {{ date(post.data.created) }}
+    <app-gildings [gildings]="post.data.gildings"></app-gildings>
+
+    <h2 *ngIf="post.data.post_hint !== 'link'">
+      {{ post.data.title }}
+    </h2>
+
+    <img
+      *ngIf="post.data.post_hint === 'image'"
+      [src]="post.data.url"
+      width="100%"/>
+
+    <div
+      *ngIf="post.data.selftext"
+      [innerText]="post.data.selftext">
+    </div>
+
+    <a [href]="post.data.url"
+       target="_blank"
+       class="row"
+       *ngIf="post.data.post_hint === 'link'">
+      <div class="col-sm-9">
+        <h3>{{ post.data.title }}</h3>
+      </div>
+      <div class="col-sm-3">
+        <img [src]="getLinkImg(post)"/>
+      </div>
+    </a>
+
+    <video
+      *ngIf="post.data.post_hint === 'hosted:video'"
+      width="100%" controls>
+      <source [src]="post.data.media.reddit_video.fallback_url">
+      Fool yo browser don't support dis here vid playa
+    </video>
+
+  </ngb-alert>
+
+  <button
+    *ngIf="comments.length > 1"
+    class="btn btn-dark btn-block"
+    (click)="flip()">
+    reverse</button>
+  <br *ngIf="comments.length > 1"/>
+
+  <span *ngFor="let comment of displayComments; let i = index">
+    <app-comment
+      *ngIf="i < limit" [comment]="comment"
+      [url]="url"
+      (close)="close(comment)"
+      [op]="post.data.author"></app-comment>
   </span>
-  <hr>
-  <button *ngIf="comments.length - limit > 0" class="btn btn-dark btn-block" (click)="limit = 5 + limit">
+
+  <hr *ngIf="comments.length - limit > 0"/>
+  <button
+    *ngIf="comments.length - limit > 0"
+    class="btn btn-dark btn-block"
+    (click)="limit = 5 + limit">
     more ({{comments.length - limit}})
   </button>
-  <button class="btn btn-dark btn-outline-danger btn-block" (click)="limit = 10">reset</button>
-<hr>
-<hr>
+
 </div>
 

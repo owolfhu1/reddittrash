@@ -1,0 +1,6 @@
+<span *ngFor="let number of numbers;let i = index">
+  <span *ngIf="gildings['gid_' + number]">
+    <img [src]="'https://www.redditstatic.com/desktop2x/img/gold/badges/award-' + types[i] + '-cartoon.png'"/>
+    <span *ngIf="gildings['gid_' + number] > 1">{{ gildings['gid_' + number] }}</span>
+  </span>
+</span>

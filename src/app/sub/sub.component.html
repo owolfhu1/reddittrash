@@ -1,5 +1,7 @@
 <div class="container">
-<br>
+
+  <br/>
+
   <ngb-alert
     type="danger"
     [dismissible]="false"
@@ -16,27 +18,64 @@
 
   <ngb-alert
     type="primary"
-    [dismissible]="false"
-    *ngFor="let post of list">
-    {{post.data.score > 0 ? '+' : null}}{{post.data.score}} <b>r/{{ post.data.subreddit }}</b> posted by <b>{{ post.data.author }}</b> on {{ date(post.data.created) }}
-    <h2>{{ post.data.title }}</h2>
+    *ngFor="let post of list"
+    (close)="close(post)">
+    {{ post.data.score > 0 ? '+' : null }}{{ post.data.score }} <b>
+    <span
+      (click)="viewSub.emit(post.data.subreddit)"
+      class="link">
+      r/{{ post.data.subreddit }}
+    </span>
+    </b> posted by <b>{{ post.data.author }}</b> on {{ date(post.data.created) }}
+    <app-gildings [gildings]="post.data.gildings"></app-gildings>
+
+    <h2 *ngIf="post.data.post_hint !== 'link'">
+      {{ post.data.title }}
+    </h2>
 
     <img
       *ngIf="post.data.post_hint === 'image'"
       [src]="post.data.url"
       width="100%"/>
 
-    <span
-      *ngIf="post.data.selftext" [innerHTML]="post.selftext_html">
-    </span>
+    <div
+      *ngIf="post.data.selftext"
+      [innerText]="post.data.selftext">
+    </div>
+
+    <a [href]="post.data.url"
+      target="_blank"
+      class="row"
+      *ngIf="post.data.post_hint === 'link'">
+      <div class="col-sm-9">
+        <h3>{{ post.data.title }}</h3>
+      </div>
+      <div class="col-sm-3">
+        <img [src]="getLinkImg(post)"/>
+      </div>
+    </a>
+
+    <video
+      *ngIf="post.data.post_hint === 'hosted:video'"
+      width="100%" controls>
+      <source [src]="post.data.media.reddit_video.fallback_url">
+      Fool yo browser don't support dis here vid playa
+    </video>
 
     <button
       *ngIf="post.data.num_comments > 0"
-      class="btn btn-block btn-success btn-outline-primary"
+      class="btn btn-block btn-success"
       (click)="viewPost.emit(getUrl(post.data.permalink))">
       comments ({{ post.data.num_comments }})
     </button>
+
   </ngb-alert>
 
+  <button
+    class="btn btn-block btn btn-success"
+    *ngIf="!!next"
+    (click)="getMore()">
+    more
+  </button>
 
 </div>

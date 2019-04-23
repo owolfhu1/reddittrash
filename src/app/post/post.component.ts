@@ -7,30 +7,28 @@ import {Strings} from '../strings';
   styleUrls: ['./post.component.scss']
 })
 export class PostComponent implements OnInit {
-
   @Input() url = '';
-
-  comments: any[] = [];
-  post = '';
-  get reversedComments() {
-    return this.reverse ? this.comments.reverse() : this.comments;
-  }
-
+  comments = [];
+  post;
   reverse = false;
   limit = 10;
 
-  constructor() { }
+  get displayComments() {
+    return this.reverse ? this.comments.reverse() : this.comments;
+  }
+
+  close(comment) {
+    this.comments.splice(this.comments.indexOf(comment), 1);
+  }
 
   process(data) {
     data.forEach(comment => {
       if (comment.kind === 't1') {
         this.comments.push(comment);
       } else if (comment.kind === 'more') {
-        console.log(comment);
         comment.data.children.forEach(async id => {
           const fetchedComment = await this.getAComment(id);
           this.comments.push(fetchedComment);
-          this.comments.sort((a, b) => b.data.score - a.data.score);
         });
       }
     });
@@ -46,18 +44,34 @@ export class PostComponent implements OnInit {
     return comment[1].data.children[0];
   }
 
-  ngOnInit() {
-    // this.view(this.url);
-  }
+  ngOnInit() {}
 
   view(newUrl) {
     this.url = newUrl;
     this.comments = [];
     fetch(Strings.PRE + this.url + '.json', { mode: 'cors' })
       .then(x => x.json()).then(x => {
-      this.post = x[0].data.children[0].data.title;
+      this.post = x[0].data.children[0];
       this.process(x[1].data.children);
     });
   }
 
+  getLinkImg(post) {
+    return !post.data.thumbnail || post.data.thumbnail === 'default' ?
+      'https://img.icons8.com/metro/104/000000/external-link.png' : post.data.thumbnail;
+  }
+
+  date(created) {
+    const data = new Date(created * 1000);
+    const date = data.toLocaleDateString();
+    const m = data.getHours() > 12 ? 'pm' : 'am';
+    const hours = data.getHours() > 12 ? data.getHours() - 12 : data.getHours();
+    const mins = data.getMinutes();
+    return date + ' at ' + hours + ':' + mins + ' ' + m;
+  }
+
+  flip() {
+    this.comments.sort((a, b) => b.data.score - a.data.score);
+    this.reverse = !this.reverse;
+  }
 }
